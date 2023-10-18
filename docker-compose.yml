@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+
+  hoppscotch:
+    restart: always
+    container_name: hoppscotch
+    image: hoppscotch/hoppscotch
+    depends_on:
+      - db_hs
+    ports:
+      - "3000:3000"
+      - "3100:3100"
+      - "3170:3170"
+    networks:
+      hs-network:
+    env_file:
+      ./.env
+
+  # PostgreSQL
+  db_hs:
+    restart: always
+    container_name: db_hs
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    networks:
+      hs-network:
+    environment:
+      - POSTGRES_USER=hopp
+      - POSTGRES_PASSWORD=scotch
+      - POSTGRES_DB=hoppscotch
+    volumes:
+      - ./db_data:/var/lib/postgresql/data
+
+networks:
+  hs-network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: bridge-hs
